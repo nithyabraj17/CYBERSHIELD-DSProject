@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBERSHIELD – Intelligent Cyber Threat Log Analyzer</title>
+  <meta name="description" content="CYBERSHIELD is an intelligent cyber threat log analyzer that detects suspicious login patterns, analyzes security events, and generates comprehensive threat reports using advanced data structures." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Particle Canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Scan Line Overlay -->
+  <div class="scanlines"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="none" stroke="url(#shield-grad)" stroke-width="2.5"/>
+            <path d="M24 10 L24 38 M14 18 L34 18 M14 28 L34 28" stroke="url(#shield-grad)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="24" cy="24" r="5" fill="url(#shield-grad)" opacity="0.8"/>
+            <defs>
+              <linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f5ff"/>
+                <stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">CYBERSHIELD</span>
+          <span class="logo-sub">Intelligent Threat Analyzer</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-section="dashboard" id="nav-dashboard">Dashboard</button>
+        <button class="nav-btn" data-section="logs" id="nav-logs">Log Manager</button>
+        <button class="nav-btn" data-section="analysis" id="nav-analysis">Analysis</button>
+        <button class="nav-btn" data-section="threats" id="nav-threats">Threats</button>
+        <button class="nav-btn" data-section="report" id="nav-report">Reports</button>
+      </nav>
+      <div class="header-status">
+        <span class="status-dot pulse"></span>
+        <span class="status-text">SYSTEM ACTIVE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+    <section id="section-dashboard" class="section active">
+      <div class="section-header">
+        <h1 class="section-title">
+          <span class="title-icon">◈</span> Security Operations Center
+        </h1>
+        <div class="time-display" id="live-time"></div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card card-blue" id="kpi-total">
+          <div class="kpi-bg-shape"></div>
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-label">Total Log Events</div>
+            <div class="kpi-value" id="kpi-total-val">0</div>
+            <div class="kpi-change">Linked List nodes</div>
+          </div>
+        </div>
+        <div class="kpi-card card-green" id="kpi-success">
+          <div class="kpi-bg-shape"></div>
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-label">Successful Logins</div>
+            <div class="kpi-value" id="kpi-success-val">0</div>
+            <div class="kpi-change">Queue processed</div>
+          </div>
+        </div>
+        <div class="kpi-card card-red" id="kpi-failed">
+          <div class="kpi-bg-shape"></div>
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-label">Failed Attempts</div>
+            <div class="kpi-value" id="kpi-failed-val">0</div>
+            <div class="kpi-change">Hash Table tracked</div>
+          </div>
+        </div>
+        <div class="kpi-card card-orange" id="kpi-threats">
+          <div class="kpi-bg-shape"></div>
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-label">Threats Detected</div>
+            <div class="kpi-value" id="kpi-threats-val">0</div>
+            <div class="kpi-change">BST flagged IPs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Visualizer + Recent Events -->
+      <div class="dashboard-grid">
+        <div class="card glass-card viz-card">
+          <div class="card-header">
+            <h2 class="card-title">⬡ Threat Topology Map</h2>
+            <span class="card-badge">3D LIVE</span>
+          </div>
+          <div class="globe-container">
+            <canvas id="globe-canvas"></canvas>
+            <div class="globe-overlay">
+              <div class="globe-stat" id="globe-stat-1">
+                <span class="gstat-label">Top IP</span>
+                <span class="gstat-value" id="top-ip-display">—</span>
+              </div>
+              <div class="globe-stat" id="globe-stat-2">
+                <span class="gstat-label">Unique IPs</span>
+                <span class="gstat-value" id="unique-ip-display">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">⚡ Live Event Stack</h2>
+            <span class="card-badge">STACK DS</span>
+          </div>
+          <div class="live-feed" id="live-feed">
+            <div class="feed-empty">
+              <div class="feed-empty-icon">📡</div>
+              <div>Awaiting log entries...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">📊 Activity Chart</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="bar-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">🌐 IP Heatmap</h2>
+            <span class="card-badge">HASH TABLE</span>
+          </div>
+          <div class="heatmap-container" id="ip-heatmap">
+            <div class="feed-empty">
+              <div class="feed-empty-icon">🗺️</div>
+              <div>No IP data yet...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ LOG MANAGER ═══════════════════════════════ -->
+    <section id="section-logs" class="section">
+      <div class="section-header">
+        <h1 class="section-title"><span class="title-icon">◈</span> Log Management Module</h1>
+        <div class="ds-badge-row">
+          <span class="ds-badge">Linked List</span>
+          <span class="ds-badge">Queue</span>
+          <span class="ds-badge">Stack</span>
+        </div>
+      </div>
+
+      <!-- Add Log Form -->
+      <div class="card glass-card form-card">
+        <div class="card-header">
+          <h2 class="card-title">➕ Add New Security Log</h2>
+        </div>
+        <form id="log-form" class="log-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="ip-input">IP Address</label>
+              <input class="form-input" id="ip-input" type="text" placeholder="e.g. 192.168.1.10" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-input">Username</label>
+              <input class="form-input" id="user-input" type="text" placeholder="e.g. admin" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="time-input">Login Time</label>
+              <input class="form-input" id="time-input" type="datetime-local" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="status-input">Login Status</label>
+              <select class="form-input form-select" id="status-input">
+                <option value="Success">✅ Success</option>
+                <option value="Failed">❌ Failed</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="add-log-btn">
+              <span>Add to Queue</span>
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+            </button>
+            <button type="button" class="btn btn-secondary" id="load-sample-btn">
+              <span>Load Sample Data</span>
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+            </button>
+            <button type="button" class="btn btn-danger" id="clear-all-btn">
+              <span>Clear All Logs</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="card glass-card search-card">
+        <div class="search-row">
+          <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+            <input class="search-input" id="search-ip" type="text" placeholder="Search logs by IP address (BST traversal)..." />
+          </div>
+          <div class="filter-group">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="Success">Success</button>
+            <button class="filter-btn" data-filter="Failed">Failed</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log Table -->
+      <div class="card glass-card table-card">
+        <div class="card-header">
+          <h2 class="card-title">📋 Security Log Records <span class="badge" id="log-count-badge">0 entries</span></h2>
+          <div class="ds-info">📌 Stored as Linked List nodes</div>
+        </div>
+        <div class="table-wrapper">
+          <table class="log-table" id="log-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>IP Address</th>
+                <th>Username</th>
+                <th>Login Time</th>
+                <th>Status</th>
+                <th>Attempts</th>
+                <th>Risk</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="log-tbody">
+              <tr class="empty-row">
+                <td colspan="8">
+                  <div class="table-empty">
+                    <div class="table-empty-icon">🔐</div>
+                    <div>No logs recorded yet. Add a log entry or load sample data.</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ ANALYSIS ═══════════════════════════════ -->
+    <section id="section-analysis" class="section">
+      <div class="section-header">
+        <h1 class="section-title"><span class="title-icon">◈</span> Login Activity Analysis</h1>
+        <div class="ds-badge-row">
+          <span class="ds-badge">Hash Table</span>
+          <span class="ds-badge">BST</span>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <!-- Stats Summary -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">📈 Login Statistics</h2>
+            <button class="btn btn-sm btn-primary" id="run-analysis-btn">▶ Run Analysis</button>
+          </div>
+          <div class="stats-list" id="stats-list">
+            <div class="stat-row">
+              <div class="stat-name">Total Attempts</div>
+              <div class="stat-bar-wrap"><div class="stat-bar" style="width:0%;background:var(--cyan)"></div></div>
+              <div class="stat-num" id="stat-total">0</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Successful</div>
+              <div class="stat-bar-wrap"><div class="stat-bar" id="bar-success" style="width:0%;background:var(--green)"></div></div>
+              <div class="stat-num" id="stat-success">0</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Failed</div>
+              <div class="stat-bar-wrap"><div class="stat-bar" id="bar-failed" style="width:0%;background:var(--red)"></div></div>
+              <div class="stat-num" id="stat-failed">0</div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-name">Unique IPs</div>
+              <div class="stat-bar-wrap"><div class="stat-bar" id="bar-unique" style="width:0%;background:var(--purple)"></div></div>
+              <div class="stat-num" id="stat-unique">0</div>
+            </div>
+          </div>
+          <div class="donut-container">
+            <canvas id="donut-chart"></canvas>
+            <div class="donut-center">
+              <div id="donut-pct">—</div>
+              <div class="donut-label">Success Rate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IP Frequency Table (Hash Table) -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">🔑 IP Frequency Table</h2>
+            <span class="card-badge">HASH TABLE</span>
+          </div>
+          <div class="freq-table-wrapper">
+            <table class="freq-table" id="freq-table">
+              <thead>
+                <tr><th>Rank</th><th>IP Address</th><th>Total</th><th>Success</th><th>Failed</th><th>Threat Score</th></tr>
+              </thead>
+              <tbody id="freq-tbody">
+                <tr><td colspan="6" class="text-center text-muted">Run analysis to populate...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BST Visualization -->
+        <div class="card glass-card bst-card">
+          <div class="card-header">
+            <h2 class="card-title">🌳 Binary Search Tree – IP Index</h2>
+            <span class="card-badge">BST</span>
+          </div>
+          <div class="bst-container">
+            <canvas id="bst-canvas"></canvas>
+            <div class="bst-legend">
+              <span class="legend-dot" style="background:var(--cyan)"></span> Normal
+              <span class="legend-dot" style="background:var(--red)"></span> Suspicious
+            </div>
+          </div>
+        </div>
+
+        <!-- Queue Visualization -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">⏩ Processing Queue</h2>
+            <span class="card-badge">QUEUE DS</span>
+          </div>
+          <div class="queue-viz" id="queue-viz">
+            <div class="queue-label queue-label-front">FRONT</div>
+            <div class="queue-items" id="queue-items"></div>
+            <div class="queue-label queue-label-rear">REAR</div>
+          </div>
+          <div class="queue-info">Logs are processed FIFO — first in, first analyzed.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ THREATS ═══════════════════════════════ -->
+    <section id="section-threats" class="section">
+      <div class="section-header">
+        <h1 class="section-title"><span class="title-icon">◈</span> Suspicious Activity Detection</h1>
+        <div class="ds-badge-row">
+          <span class="ds-badge">Stack</span>
+          <span class="ds-badge">Hash Table</span>
+        </div>
+      </div>
+
+      <!-- Alert Config -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">⚙️ Detection Rules (Configurable)</h2>
+        </div>
+        <div class="config-row">
+          <div class="config-item">
+            <label class="form-label">Failed Login Threshold</label>
+            <div class="slider-row">
+              <input type="range" class="slider" id="threshold-slider" min="2" max="10" value="3" />
+              <span class="slider-val" id="threshold-val">3</span>
+            </div>
+            <div class="config-desc">Flag IPs with ≥ N failed logins</div>
+          </div>
+          <div class="config-item">
+            <label class="form-label">High Frequency Threshold</label>
+            <div class="slider-row">
+              <input type="range" class="slider" id="freq-slider" min="3" max="20" value="5" />
+              <span class="slider-val" id="freq-val">5</span>
+            </div>
+            <div class="config-desc">Flag IPs with ≥ N total events</div>
+          </div>
+          <div class="config-item">
+            <button class="btn btn-primary full-btn" id="detect-btn">
+              🔍 Run Threat Detection
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">🚨 Security Alerts</h2>
+          <span class="badge badge-red" id="alert-count-badge">0 alerts</span>
+        </div>
+        <div class="alerts-container" id="alerts-container">
+          <div class="feed-empty">
+            <div class="feed-empty-icon">🛡️</div>
+            <div>No threats detected. Run detection to analyze logs.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recently Processed (Stack) -->
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2 class="card-title">📚 Recently Processed Events (Stack)</h2>
+          <span class="card-badge">STACK DS – LIFO</span>
+        </div>
+        <div class="stack-viz" id="stack-viz">
+          <div class="feed-empty">
+            <div class="feed-empty-icon">📦</div>
+            <div>Stack is empty. Add logs to populate.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ REPORT ═══════════════════════════════ -->
+    <section id="section-report" class="section">
+      <div class="section-header">
+        <h1 class="section-title"><span class="title-icon">◈</span> Security Report Generator</h1>
+        <button class="btn btn-primary" id="gen-report-btn">📄 Generate Report</button>
+      </div>
+
+      <div id="report-output" class="report-output">
+        <div class="card glass-card report-placeholder">
+          <div class="feed-empty">
+            <div class="feed-empty-icon">📊</div>
+            <div>Click "Generate Report" to compile a full security analysis.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <div class="modal-header" id="modal-header"></div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

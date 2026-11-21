@@ -1,0 +1,9 @@
+{
+  "name": "cybershield",
+  "version": "1.0.0",
+  "description": "CYBERSHIELD cyber threat log analyzer with Express backend",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "license": "MIT",
+  "dependencies": { "express": "^4.19.2" }
+}
